@@ -1,0 +1,12 @@
+{
+  "name": "asksocket",
+  "version": "1.0.0",
+  "description": "Promise based websocket with events and awaiting responses",
+  "main": "index.js",
+  "repository": "https://github.com/jesteriruka/asksocket",
+  "author": "JesterIruka",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^7.3.1"
+  }
+}
