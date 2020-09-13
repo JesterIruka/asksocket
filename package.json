@@ -6,6 +6,7 @@
   "repository": "https://github.com/jesteriruka/asksocket",
   "author": "JesterIruka",
   "license": "MIT",
+  "typings": "./index.d.ts",
   "dependencies": {
     "ws": "^7.3.1"
   }
