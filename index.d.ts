@@ -20,4 +20,9 @@ export interface SocketCallback {
   (as: AskSocket): any;
 }
 
-export interface TimeoutError extends Error {};
+declare interface AskStatic {
+  AskSocket: AskSocket;
+  AskSocketServer: AskSocketServer;
+}
+
+export default AskStatic;
