@@ -25,4 +25,8 @@ module.exports = class AskSocketServer extends EventEmitter {
 
     this.handle.on('listening', () => this.emit('listen', this.handle));
   }
+
+  close(cb) {
+    this.handle.close(cb);
+  }
 }

@@ -54,6 +54,10 @@ module.exports = class AskSocket extends EventEmitter {
     this._send({ event, args });
   }
 
+  close() {
+    this.handle.close();
+  }
+
   _send(obj) {
     this.handle.send(JSON.stringify(obj));
   }
