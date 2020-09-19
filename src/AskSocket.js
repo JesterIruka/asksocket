@@ -28,16 +28,16 @@ module.exports = class AskSocket extends EventEmitter {
       const resolve = (response) => this._send({ id, response });
       const reject = (error) => this._send({ id, error });
 
-      this.emit(question, resolve, reject);
+      this.emit(question, resolve, reject, ...args);
     });
   }
 
-  ask(question) {
+  ask(question, ...args) {
     const id = this.lastID++;
 
     const promise = new Promise((resolve, reject) => {
       this.pending[id] = {resolve,reject};
-      this._send({ question, id });
+      this._send({ question, id, args });
     });
 
     setTimeout(() => {
