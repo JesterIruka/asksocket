@@ -1,10 +1,10 @@
-const { AskSocket, AskSocketServer } = require('../index');
+const { AskSocket, AskSocketServer } = require('../dist');
 
 const server = new AskSocketServer(3000);
 
-server.on('listen', () => console.log('Waiting for connections...'));
+server.onListen(() => console.log('Waiting for connections...'));
 
-server.on('open', (js) => {
+server.onConnect((js) => {
   js.ask('your age').then((age) => {
     console.log('Your age is: ', age);
   });

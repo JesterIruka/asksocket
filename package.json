@@ -1,13 +1,21 @@
 {
   "name": "asksocket",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "Promise based websocket with events and awaiting responses",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": "https://github.com/jesteriruka/asksocket",
   "author": "JesterIruka",
   "license": "MIT",
   "typings": "./index.d.ts",
+  "scripts": {
+    "build": "tsc --declaration types.d.ts"
+  },
   "dependencies": {
     "ws": "^7.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^14.11.8",
+    "@types/ws": "^7.2.7",
+    "typescript": "^4.0.3"
   }
 }
