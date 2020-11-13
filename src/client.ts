@@ -1,14 +1,13 @@
 import { EventEmitter } from 'events';
 import WebSocket from 'ws';
-import TimeoutError from './TimeoutError';
 import { AnonymousFunction } from './types';
 
-interface QuestionFunction { 
-  (resolve:Function, reject: Function, ...args:any[]): this; 
+interface QuestionFunction {
+  (resolve: Function, reject: Function, ...args: any[]): this;
 }
 
-interface ArgsFunction { 
-  (...args: any[]): void; 
+interface ArgsFunction {
+  (...args: any[]): void;
 }
 
 export interface AskSocket {
@@ -22,10 +21,10 @@ export interface AskSocket {
 export class AskSocket extends EventEmitter {
 
   private handle: WebSocket;
-  private pending: Map<number, { resolve: Function, reject: Function }>;
+  private pending: Map<number, { resolve: Function, reject: Function, timeout: NodeJS.Timeout }>;
   private lastID: number;
 
-  constructor(ws: string|WebSocket) {
+  constructor(ws: string | WebSocket) {
     super();
     if (!(ws instanceof WebSocket)) ws = new WebSocket(ws);
     this.handle = ws;
@@ -48,8 +47,8 @@ export class AskSocket extends EventEmitter {
           return this.pending.delete(id);
         }
 
-        const resolve = (response:any) => this.send({ id, response });
-        const reject = (error:any) => this.send({ id, error });
+        const resolve = (response: any) => this.send({ id, response });
+        const reject = (error: any) => this.send({ id, error });
 
         this.emit(question, resolve, reject, ...args);
       } catch (err) {
@@ -65,20 +64,15 @@ export class AskSocket extends EventEmitter {
   ask(question: string, ...args: any[]) {
     const id = this.lastID++;
 
-    const promise = new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject })
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        this.pending.delete(id);
+        reject('WebSocket took too long to reply');
+      }, 15000);
+
+      this.pending.set(id, { resolve, reject, timeout })
       this.send({ question, args, id });
     });
-
-    setTimeout(() => {
-      const callback = this.pending.get(id);
-      if (callback) {
-        callback.reject(new TimeoutError(id));
-        this.pending.delete(id);
-      }
-    }, 10000);
-    
-    return promise;
   }
 
   onConnect(callback: Function) {
