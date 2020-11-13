@@ -18,10 +18,16 @@ export interface AskSocket {
   on(event: string, callback: ArgsFunction): this;
 }
 
+interface Pending {
+  resolve: Function;
+  reject: Function;
+  timeout: NodeJS.Timeout;
+}
+
 export class AskSocket extends EventEmitter {
 
   private handle: WebSocket;
-  private pending: Map<number, { resolve: Function, reject: Function, timeout: NodeJS.Timeout }>;
+  private pending: Map<number, Pending>;
   private lastID: number;
 
   constructor(ws: string | WebSocket) {
@@ -41,9 +47,13 @@ export class AskSocket extends EventEmitter {
 
         if (event && args) {
           return this.emit(event, ...args);
-        } else if (!question && this.pending.get(id)) {
-          if (response) this.pending.get(id)?.resolve(response);
-          else this.pending.get(id)?.reject(error);
+        } else if (!question && this.pending.has(id)) {
+          const { resolve, reject, timeout } = this.pending.get(id) as Pending;
+
+          if (response) resolve(response);
+          else reject(error);
+
+          clearTimeout(timeout);
           return this.pending.delete(id);
         }
 
