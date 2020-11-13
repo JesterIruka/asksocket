@@ -71,7 +71,7 @@ export class AskSocket extends EventEmitter {
     return this.handle.readyState;
   }
 
-  ask(question: string, ...args: any[]) {
+  ask(question: string, ...args: any[]): Promise<any> {
     const id = this.lastID++;
 
     return new Promise((resolve, reject) => {
